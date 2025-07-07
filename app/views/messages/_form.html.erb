@@ -1,0 +1,6 @@
+<%= form_with model: [chat, message], data: { turbo_stream: true }, id: "new_message" do |form| %>
+  <div class="mb-3">
+    <%= form.text_area :body, rows: 3, class: "form-control", placeholder: "Type your message..." %>
+  </div>
+  <%= form.submit "Send", class: "btn btn-primary" %>
+<% end %>

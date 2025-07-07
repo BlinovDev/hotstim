@@ -1,0 +1,9 @@
+<%= turbo_stream_from "chat_#{@chat.id}" %>
+
+<div id="messages"
+     data-controller="chat"
+     data-chat-current-user-id-value="<%= current_user.id %>">
+  <%= render @messages %>
+</div>
+
+<%= render partial: "messages/form", locals: { chat: @chat, message: @message } %>

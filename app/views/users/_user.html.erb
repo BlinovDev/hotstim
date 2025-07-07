@@ -1,0 +1,19 @@
+<div class="list-group-item d-flex justify-content-between align-items-center">
+  <div>
+    <strong><%= user.email %></strong>
+  </div>
+
+  <div>
+    <% if user == current_user %>
+      <span class="text-muted">It's me 👤</span>
+    <% else %>
+      <% chat = current_user.chat_with(user) %>
+
+      <% if chat %>
+        <%= link_to "Join Chat 💬", chat_path(chat), class: "btn btn-outline-primary btn-sm" %>
+      <% else %>
+        <%= button_to "Start Chat ➕", chats_path(user_id: user.id), method: :post, class: "btn btn-outline-success btn-sm" %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
