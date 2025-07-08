@@ -6,30 +6,53 @@ export default class extends Controller {
     }
 
     connect() {
-        this.alignMessages()
+        this.alignAllMessages()
+        this.scrollToBottom()
+        this.observeNewMessages()
     }
 
-    alignMessages() {
-        const currentUserId = parseInt(this.currentUserIdValue)
+    alignAllMessages() {
+        const currentUserId = this.currentUserIdValue
         const messages = this.element.querySelectorAll(".chat-message")
+        messages.forEach(message => this.alignMessage(message, currentUserId))
+    }
 
-        messages.forEach(message => {
-            const senderId = parseInt(message.dataset.userId)
-            const isMine = senderId === currentUserId
+    alignMessage(message, currentUserId) {
+        const senderId = parseInt(message.dataset.userId, 10)
+        const isMine = senderId === currentUserId
 
-            // Debug (можно потом убрать):
-            console.log(`sender: ${senderId}, me: ${currentUserId}, isMine: ${isMine}`)
+        message.classList.add("d-flex")
+        message.classList.remove("justify-content-start", "justify-content-end")
+        message.classList.add(`justify-content-${isMine ? "end" : "start"}`)
 
-            message.classList.add("d-flex", "justify-content-" + (isMine ? "end" : "start"))
+        const bubble = message.querySelector(".message-bubble")
+        if (!bubble) return
 
-            const bubble = message.querySelector("div")
-            bubble.classList.remove("bg-light", "bg-primary", "text-white", "text-dark")
+        bubble.classList.remove("bg-light", "bg-primary", "text-white", "text-dark")
 
-            if (isMine) {
-                bubble.classList.add("bg-primary", "text-white")
-            } else {
-                bubble.classList.add("bg-light", "text-dark")
-            }
+        if (isMine) {
+            bubble.classList.add("bg-primary", "text-white")
+        } else {
+            bubble.classList.add("bg-light", "text-dark")
+        }
+    }
+
+    observeNewMessages() {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach(mutation => {
+                mutation.addedNodes.forEach(node => {
+                    if (node.nodeType === 1 && node.classList.contains("chat-message")) {
+                        this.alignMessage(node, this.currentUserIdValue)
+                        this.scrollToBottom()
+                    }
+                })
+            })
         })
+
+        observer.observe(this.element, { childList: true })
+    }
+
+    scrollToBottom() {
+        this.element.scrollTop = this.element.scrollHeight
     }
 }

@@ -1,6 +1,21 @@
-<%= form_with model: [chat, message], data: { turbo_stream: true }, id: "new_message" do |form| %>
-  <div class="mb-3">
-    <%= form.text_area :body, rows: 3, class: "form-control", placeholder: "Type your message..." %>
+<%= form_with model: [chat, message],
+              data: {
+                controller: "message-form autogrow-textarea",
+                action: "turbo:submit-end->message-form#clearAndFocus"
+              },
+              id: "new_message",
+              class: "d-flex gap-2 align-items-end w-100" do |form| %>
+
+  <div class="flex-grow-1">
+    <%= form.text_area :body,
+                       class: "form-control",
+                       placeholder: "Type a message...",
+                       data: {
+                         message_form_target: "textarea",
+                         action: "keydown->message-form#submitWithEnter input->autogrow-textarea#input"
+                       },
+                       style: "min-height: 2.5em; resize: none; overflow-y: hidden;" %>
   </div>
+
   <%= form.submit "Send", class: "btn btn-primary" %>
 <% end %>
